@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 class Print:
-    def __init__(self, message):
-        self.message = message
-        print(self.message)
-Print("Python is an interpreted, interactive, object-oriented programming language that combines remarkable power with very clear syntax")
+    def __del__(self):
+        print("Python is an interpreted, interactive, object-oriented programming language that combines remarkable power with very clear syntax")
+
+Print()
