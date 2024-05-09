@@ -1,11 +1,4 @@
 #!/usr/bin/python3
-
 def islower(c):
-    
-    return ord('a') <= ord(c) <= ord('z')
 
-print(islower('a'))
-print(islower('A'))
-print(islower('z'))
-print(islower('Z'))
-print(islower('5'))
+    return ord(c) >= 97 and ord(c) <= 122
