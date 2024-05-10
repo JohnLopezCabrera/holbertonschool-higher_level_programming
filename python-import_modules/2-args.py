@@ -5,10 +5,10 @@ if __name__ == "__main__":
     num_args = len(sys.argv) - 1
     args = sys.argv[1:]
 
-    print("Number of argument(s):", end=" ")
+    print("arguments:", end=" ")
 
     if num_args == 0:
-        print(".", end="\n\n")
+        print("arguments.", end="\n\n")
     elif num_args == 1:
         print("argument:", end="\n\n")
     else:
