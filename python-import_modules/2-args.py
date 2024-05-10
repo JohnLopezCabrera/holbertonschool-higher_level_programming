@@ -6,11 +6,9 @@ if __name__ == "__main__":
     args = sys.argv[1:]
 
     if num_args == 0:
-        print("arguments.", end="\n\n")
-    elif num_args == 1:
-        print("argument:", end="\n\n")
+        print("0 arguments.")
     else:
-        print("arguments:", end="\n\n")
+        print("{} argument{}:".format(num_args, 's' if num_args > 1 else ''))
 
     for i, arg in enumerate(args, start=1):
         print("{}: {}".format(i, arg))
