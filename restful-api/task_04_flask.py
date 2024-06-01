@@ -1,55 +1,74 @@
-#!/usr/bin/python3
-
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response
+import json
+from collections import OrderedDict
 
 app = Flask(__name__)
 
-# In-memory data store
+# Ordered dict.
 users = {
-    "jane": {"name": "Jane", "age": 28, "city": "Los Angeles"}
+    "jane": OrderedDict([
+        ('username', 'jane'), 
+        ('name', 'Jane'), 
+        ('age', 28), 
+        ('city', 'Los Angeles')
+    ]),
+    "john": OrderedDict([
+        ('username', 'john'), 
+        ('name', 'John'), 
+        ('age', 30), 
+        ('city', 'New York')
+    ])
 }
 
-# Root endpoint
 @app.route('/')
 def home():
     return "Welcome to the Flask API!"
 
-# Endpoint to serve JSON data
+
 @app.route('/data')
-def get_data():
+def data():
     return jsonify(list(users.keys()))
 
-# Endpoint to check status
+
 @app.route('/status')
 def status():
     return "OK"
 
-# Endpoint to get user details by username
+
 @app.route('/users/<username>')
 def get_user(username):
     user = users.get(username)
     if user:
-        return jsonify(user)
+        response = json.dumps(user, ensure_ascii=False)
+        return Response(response, mimetype='application/json')
     else:
-        return "User not found", 404
+        return jsonify({"message": "User not found"}), 404
 
-# Endpoint to add a new user
+
 @app.route('/add_user', methods=['POST'])
 def add_user():
-    data = request.get_json()
-    username = data.get("username")
-    if not username:
-        return "Username is required", 400
-    if username in users:
-        return "User already exists", 409
-    
-    users[username] = {
-        "name": data.get("name"),
-        "age": data.get("age"),
-        "city": data.get("city")
-    }
-    return jsonify({"message": "User added", "user": users[username]})
+    user_data = request.get_json()
+    if not user_data or 'username' not in user_data or not user_data['username']:
+        return jsonify({"message": "Missing or empty username"}), 400
 
-# Run the Flask development server
+    if any(field not in user_data or not user_data[field] for field in ['name', 'age', 'city']):
+        return jsonify({"message": "Missing required field"}), 400
+
+    username = user_data['username']
+    if username in users:
+        return jsonify({"message": "User already exists"}), 409
+
+    ordered_user_data = OrderedDict([
+        ('username', username),
+        ('name', user_data['name']),
+        ('age', user_data['age']),
+        ('city', user_data['city'])
+    ])
+
+    users[username] = ordered_user_data
+    response = json.dumps({"message": "User added", "user": ordered_user_data}, ensure_ascii=False)
+    return Response(response, mimetype='application/json')
+
+
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=False)
